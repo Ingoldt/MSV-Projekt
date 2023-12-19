@@ -2,6 +2,10 @@
 .idea
 .venv
 
+# ignorieren der erzeugten wav Dateien in Recordings
+Recordings/*
+!Recordings/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -1,16 +1,17 @@
-# This is a sample Python script.
+from audio.recorder import list_recording_devices
+from audio.recorder import record_audio
 
-# Press Umschalt+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+# main loop of the programm
+def main():
+
+    list_recording_devices()
+
+    # user can select recording device by entering the index and the filename by entering a name
+    index = int(input("Enter the index of the recording device you want to choose: "))
+    filename = input("Enter the desired filename (without extension): ")
+
+    record_audio(index,filename)
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Strg+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+if __name__ == "__main__":
+    main()
