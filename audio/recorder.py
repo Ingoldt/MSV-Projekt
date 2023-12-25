@@ -10,8 +10,8 @@ CHANNELS = 1
 RATE = 44100
 CHUNK = 1024
 WAVE_OUTPUT_FILENAME = ".wav"  # Output file extension
-device_index = 0
 audio = pyaudio.PyAudio()
+
 
 def list_recording_devices():
     print("----recording device list----")
@@ -23,42 +23,57 @@ def list_recording_devices():
             print("Input Device ID ", i, " - ", device_info.get('name'))
     print("-----------------------------")
 
-def record_audio(index, filename):
-    print("recording via index " + str(index))
 
-    # Create the full path for saving the file in the "Recordings" subdirectory
-    output_directory = os.path.normpath(os.path.join(os.getcwd(), "Recordings"))
-    os.makedirs(output_directory, exist_ok=True)  # Create the directory if it doesn't exist
+class AudioRecorder:
+    def __init__(self, index):
+        self.index = index
+        self.file_path = None
+    def record_audio(self, filename):
+        print("recording via index " + str(self.index))
 
-    output_filename = filename + WAVE_OUTPUT_FILENAME
-    stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True,
-                        input_device_index=index, frames_per_buffer=CHUNK)
-    print("Recording...")
+        # Create the full path for saving the file in the "Recordings" subdirectory
+        output_directory = os.path.normpath(os.path.join(os.getcwd(), "Recordings"))
+        os.makedirs(output_directory, exist_ok=True)  # Create the directory if it doesn't exist
 
-    # This will be change to a ui button later on !!!!!
-    # Record until the user presses the specified key
+        output_filename = filename + WAVE_OUTPUT_FILENAME
+        stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True,
+                            input_device_index=self.index, frames_per_buffer=CHUNK)
+        print("Recording...")
 
-    RecordAudio = []
+        # This will be change to a ui button later on !!!!!
+        # Record until the user presses the specified key
 
-    while True:
-        data = stream.read(CHUNK)
-        RecordAudio.append(data)
+        RecordAudio = []
 
-        if keyboard.is_pressed("esc"):
-            break
+        while True:
+            data = stream.read(CHUNK)
+            RecordAudio.append(data)
 
-    print("Recording stopped")
+            if keyboard.is_pressed("esc"):
+                break
 
-    stream.stop_stream()
-    stream.close()
-    audio.terminate()
+        print("Recording stopped")
 
-    waveFile = wave.open(os.path.join(output_directory, output_filename), 'wb')
-    waveFile.setnchannels(CHANNELS)
-    waveFile.setsampwidth(audio.get_sample_size(FORMAT))
-    waveFile.setframerate(RATE)
-    waveFile.writeframes(b''.join(RecordAudio))
-    waveFile.close()
+        stream.stop_stream()
+        stream.close()
+        audio.terminate()
 
-    print(f"Audio recorded and saved as {output_filename} under {output_directory}")
+        waveFile = wave.open(os.path.join(output_directory, output_filename), 'wb')
+        waveFile.setnchannels(CHANNELS)
+        waveFile.setsampwidth(audio.get_sample_size(FORMAT))
+        waveFile.setframerate(RATE)
+        waveFile.writeframes(b''.join(RecordAudio))
+        waveFile.close()
 
+        self.file_path = os.path.join(output_directory, output_filename)
+        print(f"Audio recorded and saved as {output_filename} under {output_directory}")
+
+    '''
+    def audio_playback(self):
+        if self.file_path:
+            wave_file = AudioSegment.from_wav(self.file_path)
+            play(wave_file)
+        else:
+            print("No recorded audio to play.")
+
+    '''
