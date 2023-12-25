@@ -28,8 +28,8 @@ def main():
     if file == "n":
         input_filename = input("Enter the desired filename (without extension): ")
         output_filename = input("Enter the desired filename (without extension): ")
-        tremolo_rate = int(input("Enter the tremolo rate: "))
-        tremolo_depth = float(input("Enter the tremolo depth: "))
+        tremolo_rate = int(input("Enter the tremolo rate between 1 - 10: "))
+        tremolo_depth = float(input("Enter the tremolo depth between 0 - 1: "))
         tremolo_audio = tremolo_effect(input_filename, output_filename, tremolo_rate, tremolo_depth)
     else:
         input_filename = filename
