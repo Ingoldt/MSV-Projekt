@@ -7,6 +7,7 @@ Recordings/*
 !Recordings/
 Effects/*
 !Effects/
+TKinter_Designer/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

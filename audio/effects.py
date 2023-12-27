@@ -32,3 +32,21 @@ def tremolo_effect(input_filename, output_filename, rate, depth):
     wavfile.write(output_path, sample_rate, normalized_audio.astype(np.int16))
     print("Audio file saved to", output_path)
     return normalized_audio
+
+def distortion_effect(input_filename, output_filename, gain, clipping_threshhold):
+    # Construct full paths
+    input_path = os.path.join(INPUT_PATH, input_filename + WAVE_OUTPUT_FILENAME)
+    output_path = os.path.join(OUTPUT_PATH, output_filename + WAVE_OUTPUT_FILENAME)
+
+    # Load the wave file
+    sample_rate, audio_data = wavfile.read(input_path)
+
+    # Apply gain
+    distorted_audio = audio_data * gain
+    # Apply clipping
+    distorted_audio = np.clip(distorted_audio, -clipping_threshhold, clipping_threshhold)
+
+    # Save the modified audio
+    wavfile.write(output_path, sample_rate, distorted_audio.astype(np.int16))
+    print("Audio file saved to", output_path)
+    return distorted_audio.astype(np.int16)
