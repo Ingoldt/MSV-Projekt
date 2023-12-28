@@ -50,3 +50,55 @@ def distortion_effect(input_filename, output_filename, gain, clipping_threshhold
     wavfile.write(output_path, sample_rate, distorted_audio.astype(np.int16))
     print("Audio file saved to", output_path)
     return distorted_audio.astype(np.int16)
+
+
+def echo_effect(input_filename, output_filename, echo_delay_seconds=1, echo_amplifier=0.25):
+    # Construct full paths
+    input_path = os.path.join(INPUT_PATH, input_filename + WAVE_OUTPUT_FILENAME)
+    output_path = os.path.join(OUTPUT_PATH, output_filename + WAVE_OUTPUT_FILENAME)
+
+    # Load the wave file
+    sample_rate, audio_data = wavfile.read(input_path)
+
+    # Apply echo
+    echo_delay_samples = int(echo_delay_seconds * sample_rate)
+    for i in range(echo_delay_samples, len(audio_data)):
+        audio_data[i] += (audio_data[i - echo_delay_samples] * echo_amplifier)
+
+    # Save the modified audio
+    wavfile.write(output_path, sample_rate, audio_data.astype(np.int16))
+    print("Audio file saved to", output_path)
+    return audio_data.astype(np.int16)
+
+
+def hall_effect(input_filename, output_filename, hall_delay_seconds=0.1, hall_length=0.5, hall_amplifier=0.5, hall_repeat=3):
+    # Construct full paths
+    input_path = os.path.join(INPUT_PATH, input_filename + WAVE_OUTPUT_FILENAME)
+    output_path = os.path.join(OUTPUT_PATH, output_filename + WAVE_OUTPUT_FILENAME)
+
+    # Load the wave file
+    sample_rate, audio_data = wavfile.read(input_path)
+
+    # Calculate variables
+    delay_samples = int(hall_delay_seconds * sample_rate)
+    repeat_delay_samples = int((hall_length / hall_repeat) * sample_rate)
+    sample_length = len(audio_data)
+
+    # For every sample
+    for i in range(sample_length):
+        sample_position = i + delay_samples
+        count = 0
+
+        while (sample_position < sample_length) & (count < hall_repeat):
+            # Add hall
+            repeat_amplifier = (hall_repeat - count) / hall_repeat
+            audio_data[sample_position] += (audio_data[i] * repeat_amplifier * hall_amplifier)
+
+            # Increase values
+            sample_position += repeat_delay_samples
+            count += 1
+
+    # Save the modified audio
+    wavfile.write(output_path, sample_rate, audio_data.astype(np.int16))
+    print("Audio file saved to", output_path)
+    return audio_data.astype(np.int16)
