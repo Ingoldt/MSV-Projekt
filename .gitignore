@@ -4,9 +4,9 @@
 
 # ignorieren der erzeugten wav Dateien in Recordings und Effects
 Recordings/*
-!Recordings/
+!Recordings/.gitkeep
 Effects/*
-!Effects/
+!Effects/.gitkeep
 TKinter_Designer/
 
 # Byte-compiled / optimized / DLL files
