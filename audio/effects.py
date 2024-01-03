@@ -1,5 +1,5 @@
 from scipy.io import wavfile
-from scipy.signal import lfilter
+from scipy.signal import lfilter, butter
 import numpy as np
 import os
 import matplotlib.pyplot as plt
@@ -122,3 +122,39 @@ def reverb_effect(input_filename, output_filename, reverb_delay_ms=100, decay=0.
     print("Audio file saved to", output_path)
     return reverb_signal.astype(np.int16)
 
+def wah_wah_effect(input_filename, output_filename, lfo_frequency=4.0, min_frequency=200, max_frequency=2000, bandwidth=200):
+    # Construct full paths
+    input_path = os.path.join(INPUT_PATH, input_filename + WAVE_OUTPUT_FILENAME)
+    output_path = os.path.join(OUTPUT_PATH, output_filename + WAVE_OUTPUT_FILENAME)
+
+    # Load the wave file
+    sample_rate, audio_data = wavfile.read(input_path)
+
+    # Calculate LFO
+    lfo_samples = np.linspace(0., 1 / lfo_frequency, int(sample_rate / lfo_frequency), endpoint=False)
+    lfo = np.sin(2 * np.pi * lfo_frequency * lfo_samples) * 0.5 + 0.5
+
+    output = np.zeros([len(audio_data)])
+    for i in range(len(lfo)):
+        filter_frequency = min_frequency + lfo[i] * (max_frequency - min_frequency)
+
+        # Calculate Bandpass
+        nyquist = 0.5 * sample_rate
+        lowcut = (filter_frequency - 0.5 * bandwidth) / nyquist
+        highcut = (filter_frequency + 0.5 * bandwidth) / nyquist
+        b, a = butter(1, [lowcut, highcut], btype='band')
+
+        temp_data = lfilter(b, a, audio_data)
+        j = i
+
+        # Use Bandpass
+        while j < len(output):
+            output[j] = temp_data[j] * 0.5 + audio_data[j] * 0.5
+            j += len(lfo)
+
+        print(i, len(lfo))
+
+    # Save the modified audio
+    wavfile.write(output_path, sample_rate, output)
+    print("Audio file saved to", output_path)
+    return audio_data.astype(np.int16)
