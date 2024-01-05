@@ -1,5 +1,6 @@
 from scipy.io import wavfile
 from scipy.signal import lfilter, butter
+from audio.converter import audio_data_to_float32, audio_data_to_int16
 import numpy as np
 import os
 import matplotlib.pyplot as plt
@@ -16,6 +17,7 @@ def tremolo_effect(input_filename, output_filename, rate=4, depth=0.6):
 
     # Load the wave file
     sample_rate, audio_data = wavfile.read(input_path)
+    audio_data = audio_data_to_int16(audio_data)
 
     # Define time array, tremolo wave and normalizing depth
     time = np.arange(len(audio_data)) / float(sample_rate)
@@ -42,6 +44,7 @@ def distortion_effect(input_filename, output_filename, gain=1, clipping_threshol
 
     # Load the audio file
     sample_rate, audio_data = wavfile.read(input_path)
+    audio_data = audio_data_to_int16(audio_data)
 
     max_amplitude = np.max(np.abs(audio_data))
 
@@ -77,6 +80,7 @@ def echo_effect(input_filename, output_filename, echo_delay_seconds=1, echo_ampl
 
     # Load the wave file
     sample_rate, audio_data = wavfile.read(input_path)
+    audio_data = audio_data_to_int16(audio_data)
 
     # Apply echo
     echo_delay_samples = int(echo_delay_seconds * sample_rate)
@@ -95,6 +99,7 @@ def reverb_effect(input_filename, output_filename, reverb_delay_ms=100, decay=0.
 
     # Load the wave file
     sample_rate, audio_data = wavfile.read(input_path)
+    audio_data = audio_data_to_int16(audio_data)
 
     # Generate reverb impulse response with adjustable delay in milliseconds
     delay_length = int(reverb_delay_ms * sample_rate / 1000)  # Convert milliseconds to samples
@@ -129,6 +134,7 @@ def wah_wah_effect(input_filename, output_filename, lfo_frequency=4.0, min_frequ
 
     # Load the wave file
     sample_rate, audio_data = wavfile.read(input_path)
+    audio_data = audio_data_to_float32(audio_data)
 
     # Calculate LFO
     lfo_samples = np.linspace(0., 1 / lfo_frequency, int(sample_rate / lfo_frequency), endpoint=False)
@@ -157,4 +163,4 @@ def wah_wah_effect(input_filename, output_filename, lfo_frequency=4.0, min_frequ
     # Save the modified audio
     wavfile.write(output_path, sample_rate, output)
     print("Audio file saved to", output_path)
-    return audio_data.astype(np.int16)
+    return output
