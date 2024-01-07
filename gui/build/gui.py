@@ -111,7 +111,8 @@ list_effects = ['Echo', 'Reverb', 'Distortion', 'Tremolo', 'WahWah']
 select_option = tk.OptionMenu(
     window,
     variable,
-    *list_effects
+    *list_effects,
+    command=lambda _: print(variable.get())
 )
 
 select_option.config(
@@ -119,13 +120,22 @@ select_option.config(
     fg="black",
     activebackground='white',
     activeforeground='black',
-    font=("Arial", 16),
+    font=("Verdana", 16, 'bold'),
     borderwidth=0,
     highlightthickness=1,
     highlightcolor="#c1c6ee",
     pady=20,
-    indicatoron=0
-    
+    indicatoron=0,
+)
+
+select_option['menu'].config(
+    bg='white',
+    fg="black",
+    activebackground='#FF5C00',
+    activeforeground='black',
+    font=("Verdana", 14, 'bold'),
+    borderwidth=0
+
 )
 
 # Place OptionMenu on the canvas at a specific location
