@@ -1,5 +1,7 @@
 import os
 import wave
+from threading import Thread
+
 import pyaudio
 import keyboard
 
@@ -28,7 +30,9 @@ class AudioRecorder:
     def __init__(self, index):
         self.index = index
         self.file_path = None
-    def record_audio(self, filename):
+        self.is_recording = False
+
+    def record_audio(self, filename="recording.wav"):
         print("recording via index " + str(self.index))
 
         # Create the full path for saving the file in the "Recordings" subdirectory
@@ -49,14 +53,13 @@ class AudioRecorder:
             data = stream.read(CHUNK)
             RecordAudio.append(data)
 
-            if keyboard.is_pressed("esc"):
+            if not self.is_recording:
                 break
 
         print("Recording stopped")
 
         stream.stop_stream()
         stream.close()
-        audio.terminate()
 
         waveFile = wave.open(os.path.join(output_directory, output_filename), 'wb')
         waveFile.setnchannels(CHANNELS)
@@ -77,3 +80,10 @@ class AudioRecorder:
             print("No recorded audio to play.")
 
     '''
+
+    def start_recording(self):
+        self.is_recording = True
+        Thread(target=self.record_audio).start()
+
+    def stop_recording(self):
+        self.is_recording = False

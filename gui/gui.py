@@ -9,6 +9,7 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 import tkinter as tk
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, StringVar, ttk
+from audio.recorder import AudioRecorder
 from PIL import ImageTk, Image
 
 
@@ -19,7 +20,19 @@ ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
+def toggle_recording(button: tk.Button):
+    if recorder.is_recording:
+        button.config(image=button_image_2)
+        recorder.stop_recording()
+    else:
+        button.config(image=button_image_3)
+        recorder.start_recording()
+
+
+
 window = Tk()
+
+recorder = AudioRecorder(0)
 
 window.geometry("1280x720")
 window.configure(bg="#BD0000")
@@ -58,7 +71,7 @@ button_2 = Button(
     cursor="hand2",
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_2 clicked"),
+    command=lambda: toggle_recording(button_2),
     relief="flat"
 )
 button_2.place(
