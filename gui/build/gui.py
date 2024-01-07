@@ -7,7 +7,9 @@ from pathlib import Path
 
 # from tkinter import *
 # Explicit imports to satisfy Flake8
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+import tkinter as tk
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, StringVar, ttk
+from PIL import ImageTk, Image
 
 
 OUTPUT_PATH = Path(__file__).parent
@@ -17,12 +19,10 @@ ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
-
 window = Tk()
 
 window.geometry("1280x720")
-window.configure(bg = "#BD0000")
-
+window.configure(bg="#BD0000")
 
 canvas = Canvas(
     window,
@@ -55,6 +55,7 @@ button_image_2 = PhotoImage(
     file=relative_to_assets("button_2.png"))
 button_2 = Button(
     image=button_image_2,
+    cursor="hand2",
     borderwidth=0,
     highlightthickness=0,
     command=lambda: print("button_2 clicked"),
@@ -71,6 +72,7 @@ button_image_3 = PhotoImage(
     file=relative_to_assets("button_3.png"))
 button_3 = Button(
     image=button_image_3,
+    cursor="hand2",
     borderwidth=0,
     highlightthickness=0,
     command=lambda: print("button_3 clicked"),
@@ -87,6 +89,7 @@ button_image_4 = PhotoImage(
     file=relative_to_assets("button_4.png"))
 button_4 = Button(
     image=button_image_4,
+    cursor='hand2',
     borderwidth=0,
     highlightthickness=0,
     command=lambda: print("button_4 clicked"),
@@ -98,5 +101,40 @@ button_4.place(
     width=198.0,
     height=38.0
 )
+# Drop Down Menu
+
+variable = tk.StringVar()
+variable.set("Choose Effect")
+list_effects = ['Echo', 'Reverb', 'Distortion', 'Tremolo', 'WahWah']
+
+# Use 'window' as the parent for OptionMenu, not 'canvas'
+select_option = tk.OptionMenu(
+    window,
+    variable,
+    *list_effects
+)
+
+select_option.config(
+    bg='white',
+    fg="black",
+    activebackground='white',
+    activeforeground='black',
+    font=("Arial", 16),
+    borderwidth=0,
+    highlightthickness=1,
+    highlightcolor="#c1c6ee",
+    pady=20,
+    indicatoron=0
+    
+)
+
+# Place OptionMenu on the canvas at a specific location
+select_option.place(
+    x=0.0,
+    y=113.0,
+    width=280.0,
+    height=52.0)
+
+
 window.resizable(False, False)
 window.mainloop()
