@@ -22,10 +22,10 @@ def relative_to_assets(path: str) -> Path:
 
 def toggle_recording(button: tk.Button):
     if recorder.is_recording:
-        button.config(image=button_image_2)
+        button.config(image=record_button_img)
         recorder.stop_recording()
     else:
-        button.config(image=button_image_3)
+        button.config(image=pause_button_img)
         recorder.start_recording()
 
 
@@ -48,67 +48,57 @@ canvas = Canvas(
 )
 
 canvas.place(x = 0, y = 0)
-button_image_1 = PhotoImage(
-    file=relative_to_assets("button_1.png"))
-button_1 = Button(
-    image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("button_1 clicked"),
-    relief="flat"
-)
-button_1.place(
-    x=0.0,
-    y=113.0,
-    width=280.0,
-    height=52.0
-)
 
-button_image_2 = PhotoImage(
+pause_button_img = PhotoImage(file=relative_to_assets("pause_button.png"))
+play_button_img = PhotoImage(file=relative_to_assets("play_button.png"))
+
+
+
+record_button_img = PhotoImage(
     file=relative_to_assets("button_2.png"))
-button_2 = Button(
-    image=button_image_2,
+record_button = Button(
+    image=record_button_img,
     cursor="hand2",
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: toggle_recording(button_2),
+    command=lambda: toggle_recording(record_button),
     relief="flat"
 )
-button_2.place(
+record_button.place(
     x=388.0,
     y=113.0,
     width=140.0,
     height=52.0
 )
 
-button_image_3 = PhotoImage(
+file_select_img = PhotoImage(
     file=relative_to_assets("button_3.png"))
-button_3 = Button(
-    image=button_image_3,
+file_select_button = Button(
+    image=file_select_img,
     cursor="hand2",
     borderwidth=0,
     highlightthickness=0,
     command=lambda: print("button_3 clicked"),
     relief="flat"
 )
-button_3.place(
+file_select_button.place(
     x=570.0,
     y=113.0,
     width=140.0,
     height=52.0
 )
 
-button_image_4 = PhotoImage(
+settings_img = PhotoImage(
     file=relative_to_assets("button_4.png"))
-button_4 = Button(
-    image=button_image_4,
+settings_button = Button(
+    image=settings_img,
     cursor='hand2',
     borderwidth=0,
     highlightthickness=0,
     command=lambda: print("button_4 clicked"),
     relief="flat"
 )
-button_4.place(
+settings_button.place(
     x=0.0,
     y=0.0,
     width=198.0,
@@ -121,43 +111,81 @@ variable.set("Choose Effect")
 list_effects = ['Echo', 'Reverb', 'Distortion', 'Tremolo', 'WahWah']
 
 # Use 'window' as the parent for OptionMenu, not 'canvas'
-select_option = tk.OptionMenu(
+effects_dropdown = tk.OptionMenu(
     window,
     variable,
     *list_effects,
     command=lambda _: print(variable.get())
 )
 
-select_option.config(
+
+dropdown_img = PhotoImage(
+    file=relative_to_assets("dropdown.png"))
+effects_dropdown.config(
     bg='white',
     fg="black",
-    activebackground='white',
+    cursor='hand2',
+    activebackground='#FF5C00',
     activeforeground='black',
     font=("Verdana", 16, 'bold'),
     borderwidth=0,
-    highlightthickness=1,
+    border=0,
+    highlightthickness=0,
     highlightcolor="#c1c6ee",
     pady=20,
-    indicatoron=0,
+    indicatoron=0
 )
 
-select_option['menu'].config(
+effects_dropdown['menu'].config(
     bg='white',
     fg="black",
+    cursor='hand2',
     activebackground='#FF5C00',
     activeforeground='black',
     font=("Verdana", 14, 'bold'),
     borderwidth=0
-
 )
 
 # Place OptionMenu on the canvas at a specific location
-select_option.place(
+effects_dropdown.place(
     x=0.0,
     y=113.0,
     width=280.0,
     height=52.0)
 
+dropdown_label = tk.Label(
+    effects_dropdown,
+    width=25,
+    height=25,
+    borderwidth=0,
+    border=0,
+    highlightthickness=0,
+    image=dropdown_img
+)
+
+dropdown_label.place(
+    relx=0.87,
+    rely=0.3
+)
+
+def on_enter(event):
+    dropdown_label.config(
+        bg='#FF5C00'
+    )
+def on_leave(event):
+    dropdown_label.config(
+        bg='white'
+    )
+effects_dropdown.bind('<Enter>', on_enter)
+effects_dropdown.bind('<Leave>', on_leave)
+
+def on_dropdown_click(event):
+    x = effects_dropdown.winfo_rootx()
+    y = effects_dropdown.winfo_rooty() + effects_dropdown.winfo_height()
+    effects_dropdown['menu'].post(x, y)
+
+
+dropdown_label.bind('<Button-1>', on_dropdown_click)
 
 window.resizable(False, False)
 window.mainloop()
