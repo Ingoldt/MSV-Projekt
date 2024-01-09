@@ -30,7 +30,7 @@ class AudioRecorder:
         self.file_path = None
         self.is_recording = False
 
-    def record_audio(self, filename="recording.wav"):
+    def record_audio(self, filename="recording"):
         print("recording via index " + str(self.index))
 
         # Create the full path for saving the file in the "Recordings" subdirectory
@@ -38,6 +38,8 @@ class AudioRecorder:
         os.makedirs(output_directory, exist_ok=True)  # Create the directory if it doesn't exist
 
         output_filename = filename + WAVE_OUTPUT_FILENAME
+        self.file_path = os.path.join(output_directory, output_filename)
+
         stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True,
                             input_device_index=self.index, frames_per_buffer=CHUNK)
         print("Recording...")
@@ -63,7 +65,6 @@ class AudioRecorder:
         waveFile.writeframes(b''.join(RecordAudio))
         waveFile.close()
 
-        self.file_path = os.path.join(output_directory, output_filename)
         print(f"Audio recorded and saved as {output_filename} under {output_directory}")
 
     '''

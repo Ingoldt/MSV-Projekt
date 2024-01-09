@@ -10,9 +10,8 @@ WAVE_OUTPUT_FILENAME = ".wav"  # Output file extension
 INPUT_PATH = os.path.normpath(os.path.join(os.getcwd(), "Recordings"))
 OUTPUT_PATH = os.path.normpath(os.path.join(os.getcwd(), "Effects"))
 
-def tremolo_effect(input_filename, output_filename, rate=4, depth=0.6):
+def tremolo_effect(input_path, output_filename, rate=4, depth=0.6):
     # Construct full paths
-    input_path = os.path.join(INPUT_PATH, input_filename + WAVE_OUTPUT_FILENAME)
     output_path = os.path.join(OUTPUT_PATH, output_filename + WAVE_OUTPUT_FILENAME)
 
     # Load the wave file
@@ -37,9 +36,8 @@ def tremolo_effect(input_filename, output_filename, rate=4, depth=0.6):
     print("Audio file saved to", output_path)
     return normalized_audio
 
-def distortion_effect(input_filename, output_filename, gain=1, clipping_threshold_percentage=0.4):
+def distortion_effect(input_path, output_filename, gain=1, clipping_threshold_percentage=0.4):
     # Construct full paths
-    input_path = os.path.join(INPUT_PATH, input_filename + WAVE_OUTPUT_FILENAME)
     output_path = os.path.join(OUTPUT_PATH, output_filename + WAVE_OUTPUT_FILENAME)
 
     # Load the audio file
@@ -73,9 +71,8 @@ def distortion_effect(input_filename, output_filename, gain=1, clipping_threshol
     print("Audio file saved to", output_path)
     return distorted_audio.astype(np.int16)
 
-def echo_effect(input_filename, output_filename, echo_delay_seconds=1, echo_amplifier=0.25):
+def echo_effect(input_path, output_filename, echo_delay_seconds=1, echo_amplifier=0.25):
     # Construct full paths
-    input_path = os.path.join(INPUT_PATH, input_filename + WAVE_OUTPUT_FILENAME)
     output_path = os.path.join(OUTPUT_PATH, output_filename + WAVE_OUTPUT_FILENAME)
 
     # Load the wave file
@@ -92,9 +89,8 @@ def echo_effect(input_filename, output_filename, echo_delay_seconds=1, echo_ampl
     print("Audio file saved to", output_path)
     return audio_data.astype(np.int16)
 
-def reverb_effect(input_filename, output_filename, reverb_delay_ms=100, decay=0.5):
+def reverb_effect(input_path, output_filename, reverb_delay_ms=100, decay=0.5):
     # Construct full paths
-    input_path = os.path.join(INPUT_PATH, input_filename + WAVE_OUTPUT_FILENAME)
     output_path = os.path.join(OUTPUT_PATH, output_filename + WAVE_OUTPUT_FILENAME)
 
     # Load the wave file
@@ -127,9 +123,8 @@ def reverb_effect(input_filename, output_filename, reverb_delay_ms=100, decay=0.
     print("Audio file saved to", output_path)
     return reverb_signal.astype(np.int16)
 
-def wah_wah_effect(input_filename, output_filename, lfo_frequency=4.0, min_frequency=200, max_frequency=2000, bandwidth=200):
+def wah_wah_effect(input_path, output_filename, lfo_frequency=4.0, min_frequency=200, max_frequency=2000, bandwidth=200):
     # Construct full paths
-    input_path = os.path.join(INPUT_PATH, input_filename + WAVE_OUTPUT_FILENAME)
     output_path = os.path.join(OUTPUT_PATH, output_filename + WAVE_OUTPUT_FILENAME)
 
     # Load the wave file

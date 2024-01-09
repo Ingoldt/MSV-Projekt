@@ -8,14 +8,14 @@ from pathlib import Path
 # from tkinter import *
 # Explicit imports to satisfy Flake8
 import tkinter as tk
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, StringVar, ttk
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, StringVar, ttk, filedialog, Label
 from audio.recorder import AudioRecorder
+from audio.effects import tremolo_effect, echo_effect, reverb_effect, distortion_effect, wah_wah_effect
 from PIL import ImageTk, Image
 
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame0")
-
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -24,10 +24,43 @@ def toggle_recording(button: tk.Button):
     if recorder.is_recording:
         button.config(image=record_button_img)
         recorder.stop_recording()
+        current_input_path.set(recorder.file_path)
     else:
         button.config(image=pause_button_img)
         recorder.start_recording()
 
+def select_file():
+    selected_file_path = filedialog.askopenfilename(title="Select file", filetypes=[("WAV files", ".wav")])
+
+    if selected_file_path is not None:
+        current_input_path.set(selected_file_path)
+
+def apply_effect():
+    effect = current_effect.get()
+    path = current_input_path.get()
+
+    if effect == 'Echo':
+        delay = entry_1.get()
+        delay_amplifier = entry_2.get()
+        echo_effect(path, "echo", float(delay), float(delay_amplifier))
+    elif effect == 'Reverb':
+        delay = entry_1.get()
+        decay = entry_2.get()
+        reverb_effect(path, "reverb", float(delay), float(decay))
+    elif effect == 'Distortion':
+        gain = entry_1.get()
+        threshold = entry_2.get()
+        distortion_effect(path, "distortion", float(gain), float(threshold))
+    elif effect == 'Tremolo':
+        rate = entry_1.get()
+        depth = entry_2.get()
+        tremolo_effect(path, "tremolo", float(rate), float(depth))
+    elif effect == 'WahWah':
+        lfo = entry_1.get()
+        min = entry_2.get()
+        max = entry_3.get()
+        bandwidth = entry_4.get()
+        wah_wah_effect(path, "wah_wah", float(lfo), float(min), float(max), float(bandwidth))
 
 
 window = Tk()
@@ -51,7 +84,8 @@ canvas.place(x = 0, y = 0)
 pause_button_img = PhotoImage(file=relative_to_assets("pause_button.png"))
 play_button_img = PhotoImage(file=relative_to_assets("play_button.png"))
 
-
+current_input_path = StringVar()
+current_effect = StringVar()
 
 record_button_img = PhotoImage(
     file=relative_to_assets("button_2.png"))
@@ -77,7 +111,7 @@ file_select_button = Button(
     cursor="hand2",
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_3 clicked"),
+    command=select_file,
     relief="flat"
 )
 file_select_button.place(
@@ -111,7 +145,7 @@ save_button = Button(
     image=save_file_img,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_5 clicked"),
+    command=apply_effect,
     relief="flat"
 )
 save_button.place(
@@ -177,13 +211,13 @@ effects_dropdown = tk.OptionMenu(
     window,
     variable,
     *list_effects,
-    command=lambda _: print(variable.get())
+    command=lambda effect: select_effect(effect)
 )
 
 dropdown_img = PhotoImage(
     file=relative_to_assets("dropdown.png"))
 effects_dropdown.config(
-    bg='white',
+    bg="#D9D9D9",
     fg="black",
     cursor='hand2',
     activebackground='#FF5C00',
@@ -198,7 +232,7 @@ effects_dropdown.config(
 )
 
 effects_dropdown['menu'].config(
-    bg='white',
+    bg="#D9D9D9",
     fg="black",
     cursor='hand2',
     activebackground='#FF5C00',
@@ -247,6 +281,139 @@ def on_dropdown_click(event):
 
 
 dropdown_label.bind('<Button-1>', on_dropdown_click)
+
+# Variables for effects
+entry_1 = Entry(
+    bd=0,
+    bg="#D9D9D9",
+    fg="#000716",
+    highlightthickness=0
+)
+
+entry_2 = Entry(
+    bd=0,
+    bg="#D9D9D9",
+    fg="#000716",
+    highlightthickness=0
+)
+
+entry_3 = Entry(
+    bd=0,
+    bg="#D9D9D9",
+    fg="#000716",
+    highlightthickness=0
+)
+
+entry_4 = Entry(
+    bd=0,
+    bg="#D9D9D9",
+    fg="#000716",
+    highlightthickness=0
+)
+
+text_1 = Label(
+    font=("Inter Bold", 18 * -1),
+    bg="#1897DF",
+    fg="white"
+)
+text_2 = Label(
+    font=("Inter Bold", 18 * -1),
+    bg="#1897DF",
+    fg="white"
+)
+text_3 = Label(
+    font=("Inter Bold", 18 * -1),
+    bg="#1897DF",
+    fg="white"
+)
+text_4 = Label(
+    font=("Inter Bold", 18 * -1),
+    bg="#1897DF",
+    fg="white"
+)
+
+def select_effect(effect):
+    current_effect.set(effect)
+
+    entry_1.place_forget()
+    entry_2.place_forget()
+    entry_3.place_forget()
+    entry_4.place_forget()
+    text_1.place_forget()
+    text_2.place_forget()
+    text_3.place_forget()
+    text_4.place_forget()
+
+    # ['Echo', 'Reverb', 'Distortion', 'Tremolo', 'WahWah']
+    number_of_entries = None
+    if effect == 'Echo':
+        number_of_entries = 2
+        text_1.config(text="Delay in s")
+        text_2.config(text="Delay Amplifier in %")
+    elif effect == 'Reverb':
+        number_of_entries = 2
+        text_1.config(text="Delay in s")
+        text_2.config(text="Decay in %")
+    elif effect == 'Distortion':
+        number_of_entries = 2
+        text_1.config(text="Gain in %")
+        text_2.config(text="Threshold in %")
+    elif effect == 'Tremolo':
+        number_of_entries = 2
+        text_1.config(text="Rate as integer")
+        text_2.config(text="Depth in %")
+    elif effect == 'WahWah':
+        number_of_entries = 4
+        text_1.config(text="LFO Frequency in Hz")
+        text_2.config(text="Minimum Frequency in Hz")
+        text_3.config(text="Maximum Frequency in Hz")
+        text_4.config(text="Bandwidth in Hz")
+
+    if number_of_entries >= 1:
+        entry_1.place(
+            x=388.0,
+            y=271.0,
+            width=255.0,
+            height=42.0
+        )
+        text_1.place(
+            x=388.0,
+            y=238.0
+        )
+    if number_of_entries >= 2:
+        entry_2.place(
+            x=388.0,
+            y=370.0,
+            width=255.0,
+            height=42.0
+        )
+        text_2.place(
+            x=388.0,
+            y=337.0
+        )
+    if number_of_entries >= 3:
+        entry_3.place(
+            x=388.0,
+            y=469.0,
+            width=255.0,
+            height=42.0
+        )
+        text_3.place(
+            x=388.0,
+            y=436.0
+        )
+    if number_of_entries >= 4:
+        entry_4.place(
+            x=388.0,
+            y=568.0,
+            width=255.0,
+            height=42.0
+        )
+        text_4.place(
+            x=388.0,
+            y=535.0
+        )
+
 
 window.resizable(False, False)
 window.mainloop()
