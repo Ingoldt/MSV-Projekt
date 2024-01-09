@@ -1,9 +1,7 @@
 import os
 import wave
-from threading import Thread
-
 import pyaudio
-import keyboard
+from threading import Thread
 
 # contains the functionality to record the audio
 
@@ -43,9 +41,6 @@ class AudioRecorder:
         stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True,
                             input_device_index=self.index, frames_per_buffer=CHUNK)
         print("Recording...")
-
-        # This will be change to a ui button later on !!!!!
-        # Record until the user presses the specified key
 
         RecordAudio = []
 

@@ -35,16 +35,15 @@ window = Tk()
 recorder = AudioRecorder(0)
 
 window.geometry("1280x720")
-window.configure(bg="#BD0000")
+window.configure(bg = "#1897DF")
 
 canvas = Canvas(
-    window,
-    bg = "#BD0000",
-    height = 720,
-    width = 1280,
-    bd = 0,
-    highlightthickness = 0,
-    relief = "ridge"
+    bg="#1897DF",
+    height=720,
+    width=1280,
+    bd=0,
+    highlightthickness=0,
+    relief="ridge"
 )
 
 canvas.place(x = 0, y = 0)
@@ -104,6 +103,69 @@ settings_button.place(
     width=198.0,
     height=38.0
 )
+
+# NEW
+save_file_img = PhotoImage(
+    file=relative_to_assets("button_5.png"))
+save_button = Button(
+    image=save_file_img,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: print("button_5 clicked"),
+    relief="flat"
+)
+save_button.place(
+    x=934.0,
+    y=113.0,
+    width=140.0,
+    height=52.0
+)
+
+settings_img_hover = PhotoImage(
+    file=relative_to_assets("button_hover_1.png"))
+
+def settings_hover(e):
+    settings_button.config(
+        image=settings_img_hover
+    )
+def settings_leave(e):
+    settings_button.config(
+        image=settings_img
+    )
+
+settings_button.bind('<Enter>', settings_hover)
+settings_button.bind('<Leave>', settings_leave)
+
+file_select_img_hover = PhotoImage(
+    file=relative_to_assets("button_hover_2.png"))
+
+def file_select_hover(e):
+    file_select_button.config(
+        image=file_select_img_hover
+    )
+def file_select_leave(e):
+    file_select_button.config(
+        image=file_select_img
+    )
+
+file_select_button.bind('<Enter>', file_select_hover)
+file_select_button.bind('<Leave>', file_select_leave)
+
+save_file_img_hover = PhotoImage(
+    file=relative_to_assets("button_hover_3.png"))
+
+def save_file_hover(e):
+    save_button.config(
+        image=save_file_img_hover
+    )
+def save_file_leave(e):
+    save_button.config(
+        image=save_file_img
+    )
+
+save_button.bind('<Enter>', save_file_hover)
+save_button.bind('<Leave>', save_file_leave)
+
 # Drop Down Menu
 
 variable = tk.StringVar()
@@ -117,7 +179,6 @@ effects_dropdown = tk.OptionMenu(
     *list_effects,
     command=lambda _: print(variable.get())
 )
-
 
 dropdown_img = PhotoImage(
     file=relative_to_assets("dropdown.png"))
@@ -168,16 +229,16 @@ dropdown_label.place(
     rely=0.3
 )
 
-def on_enter(event):
+def dropdown_hover(event):
     dropdown_label.config(
         bg='#FF5C00'
     )
-def on_leave(event):
+def dropdown_leave(event):
     dropdown_label.config(
         bg='white'
     )
-effects_dropdown.bind('<Enter>', on_enter)
-effects_dropdown.bind('<Leave>', on_leave)
+effects_dropdown.bind('<Enter>', dropdown_hover)
+effects_dropdown.bind('<Leave>', dropdown_leave)
 
 def on_dropdown_click(event):
     x = effects_dropdown.winfo_rootx()
