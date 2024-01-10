@@ -287,28 +287,32 @@ dropdown_label.bind('<Button-1>', on_dropdown_click)
 entry_1 = Entry(
     bd=0,
     bg="#D9D9D9",
-    fg="#000716",
+    fg="#7B7B7B",
+    font=("Verdana", 14),
     highlightthickness=0
 )
 
 entry_2 = Entry(
     bd=0,
     bg="#D9D9D9",
-    fg="#000716",
+    fg="#7B7B7B",
+    font=("Verdana", 14),
     highlightthickness=0
 )
 
 entry_3 = Entry(
     bd=0,
     bg="#D9D9D9",
-    fg="#000716",
+    fg="#7B7B7B",
+    font=("Verdana", 14),
     highlightthickness=0
 )
 
 entry_4 = Entry(
     bd=0,
     bg="#D9D9D9",
-    fg="#000716",
+    fg="#7B7B7B",
+    font=("Verdana", 14),
     highlightthickness=0
 )
 
@@ -332,6 +336,10 @@ text_4 = Label(
     bg="#1897DF",
     fg="white"
 )
+def set_placeholder(entry, placeholder):
+    entry.delete(0, tk.END)
+    entry.insert(tk.END, str(placeholder))
+    entry.config(fg="#7B7B7B")
 
 def select_effect(effect):
     current_effect.set(effect)
@@ -351,24 +359,42 @@ def select_effect(effect):
         number_of_entries = 2
         text_1.config(text="Delay in s")
         text_2.config(text="Delay Amplifier in %")
+        set_placeholder(entry_1, 1)
+        set_placeholder(entry_2, 0.25)
+
     elif effect == 'Reverb':
         number_of_entries = 2
         text_1.config(text="Delay in s")
         text_2.config(text="Decay in %")
+        set_placeholder(entry_1, 100)
+        set_placeholder(entry_2, 0.5)
+
     elif effect == 'Distortion':
         number_of_entries = 2
         text_1.config(text="Gain in %")
         text_2.config(text="Threshold in %")
+        set_placeholder(entry_1, 1)
+        set_placeholder(entry_2, 0.5)
     elif effect == 'Tremolo':
         number_of_entries = 2
         text_1.config(text="Rate as integer")
         text_2.config(text="Depth in %")
+        set_placeholder(entry_1, 4)
+        set_placeholder(entry_2, 0.6)
     elif effect == 'WahWah':
         number_of_entries = 4
         text_1.config(text="LFO Frequency in Hz")
         text_2.config(text="Minimum Frequency in Hz")
         text_3.config(text="Maximum Frequency in Hz")
         text_4.config(text="Bandwidth in Hz")
+        entry_1.insert(tk.END,"4")
+        entry_2.insert(tk.END,"200")
+        entry_3.insert(tk.END,"2000")
+        entry_4.insert(tk.END,"200")
+        set_placeholder(entry_1, 4)
+        set_placeholder(entry_2, 200)
+        set_placeholder(entry_3, 2000)
+        set_placeholder(entry_4, 200)
 
     if number_of_entries >= 1:
         entry_1.place(
