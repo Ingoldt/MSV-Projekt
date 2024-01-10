@@ -217,7 +217,7 @@ effects_dropdown = tk.OptionMenu(
 dropdown_img = PhotoImage(
     file=relative_to_assets("dropdown.png"))
 effects_dropdown.config(
-    bg="#D9D9D9",
+    bg='#D9D9D9',
     fg="black",
     cursor='hand2',
     activebackground='#FF5C00',
@@ -252,6 +252,7 @@ dropdown_label = tk.Label(
     effects_dropdown,
     width=25,
     height=25,
+    background='#D9D9D9',
     borderwidth=0,
     border=0,
     highlightthickness=0,
@@ -269,7 +270,7 @@ def dropdown_hover(event):
     )
 def dropdown_leave(event):
     dropdown_label.config(
-        bg='white'
+        bg='#D9D9D9'
     )
 effects_dropdown.bind('<Enter>', dropdown_hover)
 effects_dropdown.bind('<Leave>', dropdown_leave)
