@@ -3,7 +3,6 @@ from scipy.signal import lfilter, butter
 from audio.converter import audio_data_to_float32, audio_data_to_int16
 import numpy as np
 import os
-import matplotlib.pyplot as plt
 
 # contains all functions that alter the recorded audio via an implemented effect
 WAVE_OUTPUT_FILENAME = ".wav"  # Output file extension

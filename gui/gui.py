@@ -42,25 +42,107 @@ def apply_effect():
     if effect == 'Echo':
         delay = entry_1.get()
         delay_amplifier = entry_2.get()
-        echo_effect(path, "echo", float(delay), float(delay_amplifier))
+        correctValue = True
+        try:
+            float(delay)
+            entry_1.config(fg="#7B7B7B")
+        except ValueError:
+            entry_1.config(fg="#D60407")
+            correctValue = False
+        try:
+            float(delay_amplifier)
+            entry_2.config(fg="#7B7B7B")
+        except ValueError:
+            entry_2.config(fg="#D60407")
+            correctValue = False
+        if correctValue:
+            echo_effect(path, "echo", float(delay), float(delay_amplifier)/100)
     elif effect == 'Reverb':
         delay = entry_1.get()
         decay = entry_2.get()
-        reverb_effect(path, "reverb", float(delay), float(decay))
+        correctValue = True
+        try:
+            int(delay)
+            entry_1.config(fg="#7B7B7B")
+        except ValueError:
+            entry_1.config(fg="#D60407")
+            correctValue = False
+        try:
+            float(decay)
+            entry_2.config(fg="#7B7B7B")
+        except ValueError:
+            entry_2.config(fg="#D60407")
+            correctValue = False
+        if correctValue:
+            reverb_effect(path, "reverb", int(delay), float(decay))
     elif effect == 'Distortion':
         gain = entry_1.get()
         threshold = entry_2.get()
-        distortion_effect(path, "distortion", float(gain), float(threshold))
+        correctValue = True
+        try:
+            float(gain)
+            entry_1.config(fg="#7B7B7B")
+        except ValueError:
+            entry_1.config(fg="#D60407")
+            correctValue = False
+        try:
+            int(threshold)
+            entry_2.config(fg="#7B7B7B")
+        except ValueError:
+            entry_2.config(fg="#D60407")
+            correctValue = False
+        if correctValue:
+            distortion_effect(path, "distortion", float(gain), int(threshold)/100)
     elif effect == 'Tremolo':
         rate = entry_1.get()
         depth = entry_2.get()
-        tremolo_effect(path, "tremolo", float(rate), float(depth))
+        correctValue = True
+        try:
+            int(rate)
+            entry_1.config(fg="#7B7B7B")
+        except ValueError:
+            entry_1.config(fg="#D60407")
+            correctValue = False
+        try:
+            int(depth)
+            entry_2.config(fg="#7B7B7B")
+        except ValueError:
+            entry_2.config(fg="#D60407")
+            correctValue = False
+        if correctValue:
+            tremolo_effect(path, "tremolo", int(rate), int(depth)/100)
     elif effect == 'WahWah':
         lfo = entry_1.get()
         min = entry_2.get()
         max = entry_3.get()
         bandwidth = entry_4.get()
-        wah_wah_effect(path, "wah_wah", float(lfo), float(min), float(max), float(bandwidth))
+        correctValue = True
+        try:
+            float(lfo)
+            entry_1.config(fg="#7B7B7B")
+        except ValueError:
+            entry_1.config(fg="#D60407")
+            correctValue = False
+        try:
+            int(min)
+            entry_2.config(fg="#7B7B7B")
+        except ValueError:
+            entry_2.config(fg="#D60407")
+            correctValue = False
+        try:
+            int(max)
+            entry_3.config(fg="#7B7B7B")
+        except ValueError:
+            entry_3.config(fg="#D60407")
+            correctValue = False
+        try:
+            int(bandwidth)
+            entry_4.config(fg="#7B7B7B")
+        except ValueError:
+            entry_4.config(fg="#D60407")
+            correctValue = False
+        if correctValue:
+            wah_wah_effect(path, "wah_wah", float(lfo), int(min), int(max), int(bandwidth))
 
 
 window = Tk()
@@ -358,29 +440,29 @@ def select_effect(effect):
     if effect == 'Echo':
         number_of_entries = 2
         text_1.config(text="Delay in s")
-        text_2.config(text="Delay Amplifier in %")
+        text_2.config(text="Delay Amplifier Factor")
         set_placeholder(entry_1, 1)
         set_placeholder(entry_2, 0.25)
 
     elif effect == 'Reverb':
         number_of_entries = 2
-        text_1.config(text="Delay in s")
-        text_2.config(text="Decay in %")
+        text_1.config(text="Delay in ms")
+        text_2.config(text="Decay Factor")
         set_placeholder(entry_1, 100)
         set_placeholder(entry_2, 0.5)
 
     elif effect == 'Distortion':
         number_of_entries = 2
-        text_1.config(text="Gain in %")
+        text_1.config(text="Gain Factor")
         text_2.config(text="Threshold in %")
         set_placeholder(entry_1, 1)
-        set_placeholder(entry_2, 0.5)
+        set_placeholder(entry_2, 50)
     elif effect == 'Tremolo':
         number_of_entries = 2
         text_1.config(text="Rate as integer")
         text_2.config(text="Depth in %")
         set_placeholder(entry_1, 4)
-        set_placeholder(entry_2, 0.6)
+        set_placeholder(entry_2, 60)
     elif effect == 'WahWah':
         number_of_entries = 4
         text_1.config(text="LFO Frequency in Hz")
