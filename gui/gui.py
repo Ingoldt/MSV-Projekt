@@ -56,7 +56,7 @@ def apply_effect():
             entry_2.config(fg="#D60407")
             correctValue = False
         if correctValue:
-            echo_effect(path, "echo", float(delay), float(delay_amplifier)/100)
+            echo_effect(path, "echo", float(delay), float(delay_amplifier))
     elif effect == 'Reverb':
         delay = entry_1.get()
         decay = entry_2.get()
