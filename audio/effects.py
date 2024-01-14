@@ -19,21 +19,25 @@ def tremolo_effect(input_path, output_filename, rate=4, depth=0.6):
 
     # Define time array, tremolo wave and normalizing depth
     time = np.arange(len(audio_data)) / float(sample_rate)
-    depth_normalized = (depth * 1.5)
-    tremolo_wave = 1 + depth_normalized * np.sin(2 * np.pi * rate * time)
+    tremolo_wave = (np.sin(2 * np.pi * rate * time + (3 / 2) * np.pi) * 0.5 + 0.5) * depth + (1 - depth)
 
-    # Mono audio
     tremolo_wav = np.resize(tremolo_wave, len(audio_data))
-    audio_data_tremolo = (audio_data * tremolo_wav).astype(np.int16)
 
-    # Normalize the resulting audio within the valid range for 16-bit PCM
-    max_amplitude = np.iinfo(np.int16).max
-    normalized_audio = (audio_data_tremolo / np.max(np.abs(audio_data_tremolo))) * max_amplitude
+    if audio_data.ndim == 1:
+        # Mono audio
+        audio_data_tremolo = (audio_data * tremolo_wav).astype(np.int16)
+    elif audio_data.ndim == 2:
+        # Stereo audio
+        audio_data_tremolo_left = ((audio_data[:, 0]) * tremolo_wav).astype(np.int16)
+        audio_data_tremolo_right = ((audio_data[:, 1]) * tremolo_wav).astype(np.int16)
+        audio_data_tremolo = np.stack((audio_data_tremolo_left, audio_data_tremolo_right), axis=1)
+    else:
+        raise Exception("Too many dimensions")
 
     # Save the modified audio
-    wavfile.write(output_path, sample_rate, normalized_audio.astype(np.int16))
+    wavfile.write(output_path, sample_rate, audio_data_tremolo.astype(np.int16))
     print("Audio file saved to", output_path)
-    return normalized_audio
+    return audio_data_tremolo
 
 def distortion_effect(input_path, output_filename, gain=1, clipping_threshold_percentage=0.4):
     # Construct full paths
@@ -80,8 +84,23 @@ def echo_effect(input_path, output_filename, echo_delay_seconds=1, echo_amplifie
 
     # Apply echo
     echo_delay_samples = int(echo_delay_seconds * sample_rate)
-    for i in range(echo_delay_samples, len(audio_data)):
-        audio_data[i] += (audio_data[i - echo_delay_samples] * echo_amplifier)
+
+    if audio_data.ndim == 1:
+        # Mono audio
+        for i in range(echo_delay_samples, len(audio_data)):
+            audio_data[i] += (audio_data[i - echo_delay_samples] * echo_amplifier)
+    elif audio_data.ndim == 2:
+        # Stereo audio
+        audio_data_left = audio_data[:, 0]
+        audio_data_right = audio_data[:, 1]
+
+        for i in range(echo_delay_samples, len(audio_data)):
+            audio_data_left[i] += (audio_data_left[i - echo_delay_samples] * echo_amplifier)
+            audio_data_right[i] += (audio_data_right[i - echo_delay_samples] * echo_amplifier)
+
+        audio_data = np.stack((audio_data_left, audio_data_right), axis=1)
+    else:
+        raise Exception("Too many dimensions")
 
     # Save the modified audio
     wavfile.write(output_path, sample_rate, audio_data.astype(np.int16))
@@ -102,8 +121,18 @@ def reverb_effect(input_path, output_filename, reverb_delay_ms=100, decay=0.5):
     impulse_response[0] = 1.0
     impulse_response[-1] = decay
 
-    # Apply reverb using lfilter
-    reverb_signal = lfilter([1.0], impulse_response, audio_data)
+    if audio_data.ndim == 1:
+        # Mono audio
+        # Apply reverb using lfilter
+        reverb_signal = lfilter([1.0], impulse_response, audio_data)
+    elif audio_data.ndim == 2:
+        # Stereo audio
+        # Apply reverb using lfilter
+        reverb_signal_left = lfilter([1.0], impulse_response, audio_data[:, 0])
+        reverb_signal_right = lfilter([1.0], impulse_response, audio_data[:, 1])
+        reverb_signal = np.stack((reverb_signal_left, reverb_signal_right), axis=1)
+    else:
+        raise Exception("Too many dimensions")
 
     '''
     # Plot the original and modified audio waveforms
@@ -134,7 +163,19 @@ def wah_wah_effect(input_path, output_filename, lfo_frequency=4.0, min_frequency
     lfo_samples = np.linspace(0., 1 / lfo_frequency, int(sample_rate / lfo_frequency), endpoint=False)
     lfo = np.sin(2 * np.pi * lfo_frequency * lfo_samples) * 0.5 + 0.5
 
-    output = np.zeros([len(audio_data)])
+    if audio_data.ndim == 1:
+        # Mono audio
+        output = np.zeros([audio_data.shape[0]])
+        is_stereo = False
+    elif audio_data.ndim == 2:
+        # Stereo audio
+        output = np.zeros([audio_data.shape[0], 2])
+        audio_data_left = audio_data[:, 0]
+        audio_data_right = audio_data[:, 1]
+        is_stereo = True
+    else:
+        raise Exception("Too many dimensions")
+
     for i in range(len(lfo)):
         filter_frequency = min_frequency + lfo[i] * (max_frequency - min_frequency)
 
@@ -143,14 +184,24 @@ def wah_wah_effect(input_path, output_filename, lfo_frequency=4.0, min_frequency
         lowcut = (filter_frequency - 0.5 * bandwidth) / nyquist
         highcut = (filter_frequency + 0.5 * bandwidth) / nyquist
         b, a = butter(1, [lowcut, highcut], btype='band')
-
-        temp_data = lfilter(b, a, audio_data)
         j = i
 
-        # Use Bandpass
-        while j < len(output):
-            output[j] = temp_data[j] * 0.5 + audio_data[j] * 0.5
-            j += len(lfo)
+        if is_stereo:
+            temp_data_left = lfilter(b, a, audio_data[:, 0])
+            temp_data_right = lfilter(b, a, audio_data[:, 1])
+
+            # Use Bandpass
+            while j < len(output):
+                output[j][0] = temp_data_left[j] * 0.5 + audio_data_left[j] * 0.5
+                output[j][1] = temp_data_right[j] * 0.5 + audio_data_right[j] * 0.5
+                j += len(lfo)
+        else:
+            temp_data = lfilter(b, a, audio_data)
+
+            # Use Bandpass
+            while j < len(output):
+                output[j] = temp_data[j] * 0.5 + audio_data[j] * 0.5
+                j += len(lfo)
 
         print(i, len(lfo))
 
