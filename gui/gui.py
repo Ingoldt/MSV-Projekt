@@ -268,23 +268,6 @@ file_select_button.place(
     height=52.0
 )
 
-settings_img = PhotoImage(
-    file=relative_to_assets("button_4.png"))
-settings_button = Button(
-    image=settings_img,
-    cursor='hand2',
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("button_4 clicked"),
-    relief="flat"
-)
-settings_button.place(
-    x=0.0,
-    y=0.0,
-    width=198.0,
-    height=38.0
-)
-
 # NEW
 save_file_img = PhotoImage(
     file=relative_to_assets("button_5.png"))
@@ -307,21 +290,6 @@ calculating_label = Label(
     fg="white",
     text="Calculating Effect"
 )
-
-settings_img_hover = PhotoImage(
-    file=relative_to_assets("button_hover_1.png"))
-
-def settings_hover(e):
-    settings_button.config(
-        image=settings_img_hover
-    )
-def settings_leave(e):
-    settings_button.config(
-        image=settings_img
-    )
-
-settings_button.bind('<Enter>', settings_hover)
-settings_button.bind('<Leave>', settings_leave)
 
 file_select_img_hover = PhotoImage(
     file=relative_to_assets("button_hover_2.png"))
