@@ -11,6 +11,8 @@ import tkinter as tk
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, StringVar, ttk, filedialog, Label
 from audio.recorder import AudioRecorder
 from audio.effects import tremolo_effect, echo_effect, reverb_effect, distortion_effect, wah_wah_effect
+
+from threading import Thread
 from PIL import ImageTk, Image
 
 
@@ -56,7 +58,8 @@ def apply_effect():
             entry_2.config(fg="#D60407")
             correctValue = False
         if correctValue:
-            echo_effect(path, "echo", float(delay), float(delay_amplifier))
+            switch_apply_button(True)
+            Thread(target=start_echo_calculation, args=(path, float(delay), float(delay_amplifier))).start()
     elif effect == 'Reverb':
         delay = entry_1.get()
         decay = entry_2.get()
@@ -74,7 +77,8 @@ def apply_effect():
             entry_2.config(fg="#D60407")
             correctValue = False
         if correctValue:
-            reverb_effect(path, "reverb", int(delay), float(decay))
+            switch_apply_button(True)
+            Thread(target=start_reverb_calculation, args=(path, int(delay), float(decay)/100)).start()
     elif effect == 'Distortion':
         gain = entry_1.get()
         threshold = entry_2.get()
@@ -92,7 +96,8 @@ def apply_effect():
             entry_2.config(fg="#D60407")
             correctValue = False
         if correctValue:
-            distortion_effect(path, "distortion", float(gain), int(threshold)/100)
+            switch_apply_button(True)
+            Thread(target=start_distortion_calculation, args=(path, float(gain), float(threshold)/100)).start()
     elif effect == 'Tremolo':
         rate = entry_1.get()
         depth = entry_2.get()
@@ -110,7 +115,8 @@ def apply_effect():
             entry_2.config(fg="#D60407")
             correctValue = False
         if correctValue:
-            tremolo_effect(path, "tremolo", int(rate), int(depth)/100)
+            switch_apply_button(True)
+            Thread(target=start_tremolo_calculation, args=(path, int(rate), int(depth)/100)).start()
     elif effect == 'WahWah':
         lfo = entry_1.get()
         min = entry_2.get()
@@ -142,7 +148,66 @@ def apply_effect():
             entry_4.config(fg="#D60407")
             correctValue = False
         if correctValue:
-            wah_wah_effect(path, "wah_wah", float(lfo), int(min), int(max), int(bandwidth))
+            switch_apply_button(True)
+            Thread(target=start_wah_wah_calculation, args=(path, float(lfo), int(min), int(max), int(bandwidth))).start()
+
+
+def start_echo_calculation(path, delay, delay_amplifier):
+    try:
+        echo_effect(path, "echo", delay, delay_amplifier)
+    except Exception:
+        print("Exception occured")
+    switch_apply_button(False)
+
+
+def start_reverb_calculation(path, delay, decay):
+    try:
+        reverb_effect(path, "reverb", delay, decay)
+    except Exception:
+        print("Exception occured")
+    switch_apply_button(False)
+
+
+def start_distortion_calculation(path, gain, threshold):
+    try:
+        distortion_effect(path, "distortion", gain, threshold)
+    except Exception:
+        print("Exception occured")
+    switch_apply_button(False)
+
+
+def start_tremolo_calculation(path, rate, depth):
+    try:
+        tremolo_effect(path, "tremolo", rate, depth)
+    except Exception:
+        print("Exception occured")
+    switch_apply_button(False)
+
+
+def start_wah_wah_calculation(path, lfo, min, max, bandwidth):
+    try:
+        wah_wah_effect(path, "wah_wah", lfo, min, max, bandwidth)
+    except Exception:
+        print("Exception occured")
+    switch_apply_button(False)
+
+
+
+def switch_apply_button(calculating):
+    if calculating:
+        place_element = calculating_label
+        forget_element = save_button
+    else:
+        place_element = save_button
+        forget_element = calculating_label
+
+    forget_element.place_forget()
+    place_element.place(
+        x=934.0,
+        y=113.0,
+        width=140.0,
+        height=52.0
+    )
 
 
 window = Tk()
@@ -235,6 +300,12 @@ save_button.place(
     y=113.0,
     width=140.0,
     height=52.0
+)
+calculating_label = Label(
+    font=("Inter Bold", 18 * -1),
+    bg="#1897DF",
+    fg="white",
+    text="Calculating Effect"
 )
 
 settings_img_hover = PhotoImage(
