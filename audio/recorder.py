@@ -67,16 +67,6 @@ class AudioRecorder:
 
         print(f"Audio recorded and saved as {output_filename} under {output_directory}")
 
-    '''
-    def audio_playback(self):
-        if self.file_path:
-            wave_file = AudioSegment.from_wav(self.file_path)
-            play(wave_file)
-        else:
-            print("No recorded audio to play.")
-
-    '''
-
     def start_recording(self):
         self.is_recording = True
         Thread(target=self.record_audio).start()
