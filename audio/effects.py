@@ -59,18 +59,6 @@ def distortion_effect(input_path, output_filename, gain=1, clipping_threshold_pe
     # Save the distorted audio
     wavfile.write(output_path, sample_rate, distorted_audio.astype(np.int16))
 
-    '''
-    # Plot the original and modified audio waveforms
-    plt.figure(figsize=(10, 4))
-    plt.plot(audio_data, label='Original')
-    plt.plot(distorted_audio, label='Distortion Effect')
-    plt.legend()
-    plt.title('Original and Modified Audio Waveforms')
-    plt.xlabel('Sample')
-    plt.ylabel('Amplitude')
-    plt.show()
-    '''
-
     print("Audio file saved to", output_path)
     return distorted_audio.astype(np.int16)
 
@@ -133,18 +121,6 @@ def reverb_effect(input_path, output_filename, reverb_delay_ms=100, decay=0.5):
         reverb_signal = np.stack((reverb_signal_left, reverb_signal_right), axis=1)
     else:
         raise Exception("Too many dimensions")
-
-    '''
-    # Plot the original and modified audio waveforms
-    plt.figure(figsize=(10, 4))
-    plt.plot(audio_data, label='Original')
-    plt.plot(reverb_signal, label='Reverb Effect')
-    plt.legend()
-    plt.title('Original and Modified Audio Waveforms')
-    plt.xlabel('Sample')
-    plt.ylabel('Amplitude')
-    plt.show()
-    '''
 
     # Save the modified audio
     wavfile.write(output_path, sample_rate, reverb_signal.astype(np.int16))
